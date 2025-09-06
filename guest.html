@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>寫下你的名字｜Welcome to Songqiang</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="guest">
+  <div class="card">
+    <h1>Welcome｜松強 ONE 歲</h1>
+    <p>送出你的名字，會變成彩色貼紙出現在大螢幕。</p>
+    <form id="nameForm">
+      <input id="nameInput" type="text" maxlength="12" placeholder="你的名字 / Name" required />
+      <button type="submit">送出</button>
+    </form>
+    <p id="msg" class="msg"></p>
+  </div>
+
+  <!--  Firebase（可選） -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    // 貼你的設定
+    window.FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD6OqDWFl2nuyRZ6n89zcGxhnPYpT5q-IY",
+      authDomain: "school-23cf3.firebaseapp.com",
+      databaseURL: "https://school-23cf3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "school-23cf3",
+      storageBucket: "school-23cf3.appspot.com",
+      messagingSenderId: "512828575952",
+      appId: "1:512828575952:web:2e286732f172b0c9e9ced5"
+    };
+  </script>
+
+  <script src="js/app.js"></script>
+  <script> App.init({ role: 'guest' }); </script>
+</body>
+</html>

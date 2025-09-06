@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>松強 ONE 歲｜啟用典禮主螢幕</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body class="screen">
+  <div id="stage">
+    <!-- 背景圖層 -->
+    <div class="bg"></div>
+
+    <!-- 紅帶（Enter 觸發剪綵；或之後改點紅結） -->
+    <div id="ribbon">
+      <div class="ribbon-left"></div>
+      <div class="ribbon-knot"></div>
+      <div class="ribbon-right"></div>
+    </div>
+
+    <!-- 名字貼紙層（剪綵前隱藏） -->
+    <div id="balloon-layer"></div>
+
+    <!-- 右下角：QR（剪綵後才顯示） -->
+    <div id="qrBox" class="panel">
+      <h3>Welcome｜松強 ONE 歲</h3>
+      <p>剪綵後，請掃描 QR 輸入名字</p>
+      <div id="qrcode"></div>
+    </div>
+
+    <div class="hint">按 Enter 鍵剪綵 🎀</div>
+  </div>
+
+  <!--  Firebase（可選） -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    // 貼你的設定
+    window.FIREBASE_CONFIG = {
+      apiKey: "AIzaSyD6OqDWFl2nuyRZ6n89zcGxhnPYpT5q-IY",
+      authDomain: "school-23cf3.firebaseapp.com",
+      databaseURL: "https://school-23cf3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "school-23cf3",
+      storageBucket: "school-23cf3.appspot.com",
+      messagingSenderId: "512828575952",
+      appId: "1:512828575952:web:2e286732f172b0c9e9ced5"
+    };
+  </script>
+
+  
+
+
+  <script src="js/app.js"></script>
+  <script>
+    App.init({ role: 'screen' });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Enter') App.cutRibbon(); });
+  </script>
+</body>
+</html>

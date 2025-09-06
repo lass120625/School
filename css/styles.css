@@ -1,0 +1,76 @@
+:root{
+  --bg:#fff8ff; --ink:#2b2b2b; --accent:#ff6b8b; --accent-dark:#d94e70;
+  --balloonA:#ff9ec1; --balloonB:#f7b267; --balloonC:#c7a6ff; --balloonD:#7fd1ae;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family: system-ui, -apple-system, 'Noto Sans TC', sans-serif;color:var(--ink)}
+
+@font-face{
+  font-family: 'ChenYuluoyanMS';
+  src: url('../assets/fonts/ChenYuluoyan-Thin-Monospaced.ttf') format('truetype');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+
+/* 主螢幕布局 */
+body.screen{background:linear-gradient(#fdf2ff, #f4f7ff);}
+#stage{position:relative; height:100vh; overflow:hidden}
+.hint{position:absolute;left:20px;top:12px;opacity:.75; z-index:3}
+.panel{position:absolute;right:20px;bottom:20px;background:#fff8;backdrop-filter:blur(6px);padding:12px 14px;border-radius:16px;box-shadow:0 10px 30px #0002; z-index:3}
+#qrcode{width:140px;height:140px;margin-top:6px}
+
+/* 背景圖層 */
+#stage .bg{position:absolute; inset:0; background: url('/assets/Untitled.jpeg') center/cover no-repeat; z-index:0}
+
+/* 紅帶 */
+#ribbon{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:50px; pointer-events:none; z-index:2}
+.ribbon-left,.ribbon-right{position:absolute; top:0; width:50%; height:100%; background:linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 100%)}
+.ribbon-left{left:0; border-top-right-radius:30px; border-bottom-right-radius:30px}
+.ribbon-right{right:0; transform:scaleX(-1); border-top-right-radius:30px; border-bottom-right-radius:30px}
+.ribbon-knot{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:80px; height:80px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fff7, transparent 60%), var(--accent); box-shadow:0 0 0 6px #fff6}
+.cut .ribbon-left{animation:slideL .8s ease forwards}
+.cut .ribbon-right{animation:slideR .8s ease forwards}
+.cut .ribbon-knot{animation:pop .4s ease forwards .2s}
+@keyframes slideL{to{transform:translateX(-120%)}}
+@keyframes slideR{to{transform:translateX(120%) scaleX(-1)}}
+@keyframes pop{to{transform:translate(-50%,-50%) scale(.1); opacity:0}}
+
+/* 名字貼紙層 */
+#balloon-layer{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1}
+.sticker{position:absolute; min-width:110px; padding:10px 14px; border-radius:14px;
+  font-weight:700; text-align:center; color:#1b1b1b;
+  background:#fff8; backdrop-filter:blur(4px); box-shadow:0 10px 24px #0002;
+  transform:rotate(var(--rot, 0deg)) scale(1);
+  font-family: 'ChenYuluoyanMS', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+  letter-spacing: .02em;
+}
+.sticker[data-c="0"]{background:var(--balloonA)}
+.sticker[data-c="1"]{background:var(--balloonB)}
+.sticker[data-c="2"]{background:var(--balloonC)}
+.sticker[data-c="3"]{background:var(--balloonD)}
+
+/* Gentle motion pack */
+@keyframes bob { 0%,100%{ transform:translateY(0) rotate(var(--rot,0deg)) } 50%{ transform:translateY(-3px) rotate(var(--rot,0deg)) } }
+@keyframes sway { 0%,100%{ transform:rotate(calc(var(--rot,0deg) - 1deg)) } 50%{ transform:rotate(calc(var(--rot,0deg) + 1deg)) } }
+@keyframes breathe { 0%,100%{ transform:scale(1) rotate(var(--rot,0deg)) } 50%{ transform:scale(1.02) rotate(var(--rot,0deg)) } }
+.sticker.motion-bob { animation: bob var(--dur1, 3.2s) ease-in-out infinite; will-change: transform; }
+.sticker.motion-sway { animation: sway var(--dur2, 4.4s) ease-in-out infinite; will-change: transform; }
+.sticker.motion-breathe { animation: breathe var(--dur3, 5.6s) ease-in-out infinite; will-change: transform; }
+.sticker.motion-bob.motion-breathe { animation: bob var(--dur1,3.2s) ease-in-out infinite, breathe var(--dur3,5.6s) ease-in-out infinite; }
+.sticker.motion-sway.motion-breathe { animation: sway var(--dur2,4.4s) ease-in-out infinite, breathe var(--dur3,5.6s) ease-in-out infinite; }
+.sticker.motion-bob.motion-sway { animation: bob var(--dur1,3.2s) ease-in-out infinite, sway var(--dur2,4.4s) ease-in-out infinite; }
+.sticker.motion-bob.motion-sway.motion-breathe { animation: bob var(--dur1,3.2s) ease-in-out infinite, sway var(--dur2,4.4s) ease-in-out infinite, breathe var(--dur3,5.6s) ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .sticker[class*="motion-"] { animation: none !important; } }
+
+/* 剪綵前「看不到」QR 與名字層（剪綵後才顯示） */
+#stage:not(.after-cut) #qrBox { display:none; }
+#stage:not(.after-cut) #balloon-layer { display:none; }
+
+/* 來賓頁 */
+body.guest{background:linear-gradient(#fff, #f3f8ff); display:grid; place-items:center; height:100vh}
+.card{background:#fff; padding:24px 20px; border-radius:20px; box-shadow:0 20px 60px #0002; width:min(92vw,520px)}
+.card h1{margin:0 0 8px}
+#nameForm{display:flex; gap:10px; margin-top:12px}
+#nameInput{flex:1; padding:12px 14px; border:2px solid #ddd; border-radius:12px; font-size:18px}
+button{padding:12px 16px; border-radius:12px; background:var(--accent); color:#fff; border:none; font-size:16px; cursor:pointer}
+button:hover{filter:brightness(0.92)}
+.msg{color:#2a6f2a; margin-top:10px}

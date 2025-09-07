@@ -1,6 +1,6 @@
 /*
   App：
-  - 本機 DEMO 或 Firebase（可選）
+  - Firebase（雲端同步）
   - 貼紙（常駐、不飄走）＋ 輕微動態
   - 剪綵前不顯示名字與 QR；剪綵後才顯示＆生成 QR
   - 每次重新整理都清空名字與剪綵狀態（測試模式）
@@ -10,7 +10,8 @@ const App = (() => {
   const LS_KEY = 'songqiang_names_v2';
   const CUT_KEY = 'songqiang_cut_v1';
   // 可選：固定 QR 基底，避免掃到 localhost；結尾一定是 '/'
-  const FORCE_QR_BASE = 'http://127.0.0.1:5500/';
+  // 例：'https://<你的帳號>.github.io/School/' 或 'http://192.168.x.x:5500/'
+  const FORCE_QR_BASE = 'https://lass120625.github.io/School/guest.html/';
 
   // ---------------- Init ----------------
   function init({ role }){
@@ -26,7 +27,7 @@ const App = (() => {
       state.cut = localStorage.getItem(CUT_KEY) === '1'; // 這行會被上面清掉，所以預設 false
       const stage = document.getElementById('stage');
       if (state.cut) { stage?.classList.add('after-cut'); const r=document.getElementById('ribbon'); r?.classList.add('cut'); }
-      // if (!state.useFirebase) loadLocalToScreen();
+      // Firebase-only，不載入本地資料
     } else if (role === 'guest') {
       bindGuestForm();
     }
@@ -36,42 +37,19 @@ const App = (() => {
   function initFirebase(){
     const app = firebase.initializeApp(window.FIREBASE_CONFIG);
     state.db = firebase.database();
+
     if (state.role === 'screen') {
-      state.db.ref('names').on('child_added', snap => {
-        const val = snap.val();
-        const item = (val && typeof val === 'object' && val.name) ? val : { name: val, pos: null };
-        if (state.cut) { spawnSticker(item.name, item.pos); }
-        else { state.queue.push(item); }
+      // ✅ 重點：主畫面開啟時，先清空上次留下的名字，再開始監聽新進資料
+      state.db.ref('names').remove().finally(() => {
+        state.db.ref('names').on('child_added', snap => {
+          const val = snap.val();
+          const item = (val && typeof val === 'object' && val.name) ? val : { name: val, pos: null };
+          if (state.cut) { spawnSticker(item.name, item.pos); }
+          else { state.queue.push(item); }
+        });
       });
     }
   }
-
-  // ---------------- Local DEMO ----------------
-  // function loadLocalToScreen(){
-  //   const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-  //   arr.forEach(item => {
-  //     const it = (typeof item === 'string') ? { name:item, pos:null } : item;
-  //     if (state.cut) spawnSticker(it.name, it.pos); else state.queue.push(it);
-  //   });
-  //   // 儲存同步（同一台不同分頁）
-  //   window.addEventListener('storage', (e)=>{
-  //     if (e.key === LS_KEY) {
-  //       const latest = JSON.parse(e.newValue || '[]');
-  //       latest.forEach(it=>{
-  //         const obj = (typeof it === 'string') ? { name:it, pos:null } : it;
-  //         if (state.cut) spawnSticker(obj.name, obj.pos); else state.queue.push(obj);
-  //       });
-  //     }
-  //   });
-  // }
-  // function saveLocal(name){
-  //   const arr = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
-  //   const pos = randomPos();
-  //   arr.push({ name, pos });
-  //   localStorage.setItem(LS_KEY, JSON.stringify(arr));
-  //   return pos;
-  // }
-
 
   // ---------------- Guest Submit ----------------
   function bindGuestForm(){
@@ -83,6 +61,7 @@ const App = (() => {
       const name = input.value.trim();
       if (!name) return;
       const pos = randomPos();
+      // Firebase-only：直接寫雲端
       state.db.ref('names').push({ name, pos });
 
       input.value = '';
@@ -150,16 +129,18 @@ const App = (() => {
     confetti({ spread: 70, particleCount: 160, origin: { y: 0.6 } });
   }
 
-  // 管理熱鍵：R=重置、C=清空名字
+  // 管理熱鍵：R=重置（含清 Firebase）、C=只清畫面
   window.addEventListener('keydown', (e)=>{
     if (state.role !== 'screen') return;
     if (e.key.toLowerCase() === 'r') {
-      localStorage.removeItem(LS_KEY);
+      // 先清 Firebase 名單
+      try { state.db && state.db.ref('names').remove(); } catch(err){}
+      // 清畫面與狀態
+      document.querySelectorAll('#balloon-layer .sticker').forEach(el=> el.remove());
       localStorage.removeItem(CUT_KEY);
       location.reload();
     }
     if (e.key.toLowerCase() === 'c') {
-      localStorage.removeItem(LS_KEY);
       document.querySelectorAll('#balloon-layer .sticker').forEach(el=> el.remove());
     }
   });

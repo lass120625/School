@@ -19,7 +19,7 @@ body.screen{background:linear-gradient(#fdf2ff, #f4f7ff);}
 #qrcode{width:140px;height:140px;margin-top:6px}
 
 /* 背景圖層 */
-#stage .bg{position:absolute; inset:0; background: url('/assets/Untitled.jpeg') center/cover no-repeat; z-index:0}
+#stage .bg{position:absolute; inset:0; background: url('/School/assets/Untitled.jpeg') center/cover no-repeat; z-index:0}
 
 /* 紅帶 */
 #ribbon{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:50px; pointer-events:none; z-index:2}

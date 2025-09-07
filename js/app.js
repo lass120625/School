@@ -39,15 +39,14 @@ const App = (() => {
   function initFirebase(){
     const app = firebase.initializeApp(window.FIREBASE_CONFIG);
     state.db = firebase.database();
-
     if (state.role === 'screen') {
-      // ✅ 重點：主畫面開啟時，先清空上次留下的名字，再開始監聽新進資料
+      // 主畫面啟動先清空，再掛監聽
       state.db.ref('names').remove().finally(() => {
         state.db.ref('names').on('child_added', snap => {
           const val = snap.val();
           const item = (val && typeof val === 'object' && val.name) ? val : { name: val, pos: null };
-          if (state.cut) { spawnSticker(item.name, item.pos); }
-          else { state.queue.push(item); }
+          if (state.cut) spawnSticker(item.name, item.pos);
+          else state.queue.push(item);
         });
       });
     }

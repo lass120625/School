@@ -11,7 +11,7 @@ const App = (() => {
   const CUT_KEY = 'songqiang_cut_v1';
   // 可選：固定 QR 基底，避免掃到 localhost；結尾一定是 '/'
   // 例：'https://<你的帳號>.github.io/School/' 或 'http://192.168.x.x:5500/'
-  const FORCE_QR_BASE = 'https://lass120625.github.io/School/guest.html/';
+  const FORCE_QR_BASE = 'https://lass120625.github.io/School/guest.html';
 
   // ---------------- Init ----------------
   function init({ role }){

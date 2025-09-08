@@ -88,7 +88,7 @@ body.screen {
 #stage .bg {
   position: absolute;
   inset: 0;
-  background: url('/lass120625/assets/background1.png') center/cover no-repeat;
+  background: url('/lass120625/School/assets/background1.png') center/cover no-repeat;
   z-index: 0;
 }
 

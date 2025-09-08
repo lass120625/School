@@ -1,0 +1,36 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg width="300" height="80" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明，左右邊界在同一高度，適合 repeat-x -->
+  <defs>
+    <!-- 主色漸層（水平，避免接縫） -->
+    <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d62839"></stop>
+      <stop offset="100%" stop-color="#a51c30"></stop>
+    </linearGradient>
+    <!-- 高光 -->
+    <linearGradient id="hl" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"></stop>
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0.18"></stop>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- 絲帶本體（上緣與下緣波形，左右端點高度一致，可無縫銜接） -->
+  <path fill="url(#rg)" d="
+    M 0,40
+    C 50,10 100,10 150,40
+    S 250,70 300,40
+    L 300,60
+    C 250,90 200,90 150,60
+    S 50,20 0,60
+    Z"></path>
+
+  <!-- 上方高光帶一點立體感 -->
+  <path fill="url(#hl)" d="
+    M 0,40
+    C 50,20 100,18 150,40
+    S 250,62 300,40
+    L 300,50
+    C 250,70 200,70 150,50
+    S 50,30 0,50 Z"></path>
+</svg>

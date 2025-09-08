@@ -80,22 +80,39 @@ const App = (() => {
   function spawnSticker(name, pos) {
     const layer = document.getElementById('balloon-layer');
     if (!layer) return;
+  
+    // 容器
     const el = document.createElement('div');
-    const motions = ['motion-bob','motion-sway','motion-breathe'];
-    const chosen = motions.filter(()=> Math.random()<0.7);
-    el.className = 'sticker ' + chosen.join(' ');
-    el.dataset.c = Math.floor(Math.random()*4);
+    el.className = 'balloon';
+  
+    // 隨機氣球顏色
+    const svgs = ['紅.svg','粉紅.svg','紫.svg','橘.svg','藍.svg'];
+    const pick = svgs[Math.floor(Math.random()*svgs.length)];
+    const img = document.createElement('img');
+    img.src = 'assets/' + pick;
+    img.alt = 'balloon';
+  
+    // 文字標籤
+    const label = document.createElement('div');
+    label.className = 'balloon-label';
+    label.textContent = name;
+  
+    el.appendChild(img);
+    el.appendChild(label);
+  
+    // 定位
     const p = pos || randomPos();
-    el.style.left = p.x + '%'; el.style.top = p.y + '%';
-    const rot = (Math.random()*6-3).toFixed(2) + 'deg';
-    el.style.setProperty('--rot', rot);
-    el.style.setProperty('--dur1', (2.8 + Math.random()*1.6).toFixed(2)+'s');
-    el.style.setProperty('--dur2', (3.6 + Math.random()*2.2).toFixed(2)+'s');
-    el.style.setProperty('--dur3', (5.0 + Math.random()*2.4).toFixed(2)+'s');
-    el.textContent = name;
+    el.style.left = p.x + '%';
+    el.style.top  = p.y + '%';
+  
+    // 輕微漂浮
+    el.style.setProperty('--floatDur', (5 + Math.random()*2).toFixed(2)+'s');
+  
     layer.appendChild(el);
     return p;
   }
+  
+  
 
   // 建立 keyframes（備用）
   const style = document.createElement('style');
@@ -121,13 +138,33 @@ const App = (() => {
     r.classList.add('cut');
     const stage = document.getElementById('stage'); stage?.classList.add('after-cut');
     state.cut = true; try{ localStorage.setItem(CUT_KEY,'1'); }catch(e){}
+   
+   
+    const duration = 2000; // 撒 2 秒
+    const end = Date.now() + duration;
+    
+    (function frame() {
+      confetti({
+        spread: 120,                  // 更大角度
+        startVelocity: 40,            // 初始速度
+        gravity: 0.8,                 // 下墜感
+        particleCount: 40,            // 每次少一點，持續多次
+        origin: {
+          x: Math.random(),           // 隨機水平位置
+          y: Math.random() * 0.5      // 隨機從上半部噴出
+        },
+        colors: ['#ff6b8b','#ff9ec1','#f7b267','#c7a6ff','#7fd1ae','#ffd700','#00cfff']
+      });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+    
+
     // 顯示排隊名單
     state.queue.forEach(item=> spawnSticker(item.name, item.pos));
     state.queue.length = 0;
     // 剪綵後才生成 QR
     showQR();
-    // confetti
-    confetti({ spread: 70, particleCount: 160, origin: { y: 0.6 } });
+
   }
 
   // 管理熱鍵：R=重置（含清 Firebase）、C=只清畫面
